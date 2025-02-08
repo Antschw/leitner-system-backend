@@ -29,7 +29,7 @@ Ce projet respecte les spécifications décrites dans le fichier **Swagger.yml**
 ### 1. Cloner le dépôt
 
 ```sh
- git clone <URL_DU_DEPOT>
+ git clone <https://github.com/Antschw/leitner-system-backend>
  cd leitner-system-backend
 ```
 
