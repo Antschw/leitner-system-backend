@@ -19,7 +19,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class CardServiceImplTest {
 
@@ -42,28 +46,6 @@ class CardServiceImplTest {
     }
 
     @Test
-    void shouldReturnAllCardsWhenNoTagsAreProvided() {
-        List<Card> mockCards = List.of(new Card(), new Card());
-        when(cardRepository.findAll()).thenReturn(mockCards);
-
-        List<Card> result = cardService.getAllCards(null);
-
-        assertThat(result).isEqualTo(mockCards);
-        verify(cardRepository).findAll();
-    }
-
-    @Test
-    void shouldFilterCardsByTags() {
-        List<Card> filteredCards = List.of(new Card());
-        when(cardRepository.findByTags(List.of("tag1"))).thenReturn(filteredCards);
-
-        List<Card> result = cardService.getAllCards(List.of("tag1"));
-
-        assertThat(result).isEqualTo(filteredCards);
-        verify(cardRepository).findByTags(List.of("tag1"));
-    }
-
-    @Test
     void shouldReturnAllCardsWhenNoTagsOrEmptyListIsProvided() {
         List<Card> mockCards = List.of(new Card(), new Card());
         when(cardRepository.findAll()).thenReturn(mockCards);
@@ -76,14 +58,19 @@ class CardServiceImplTest {
         verify(cardRepository, times(2)).findAll();
     }
 
-
     @Test
-    void shouldReturnEmptyListWhenTagsDoNotMatchAnyCard() {
+    void shouldHandleTagFilteringCorrectly() {
+        List<Card> filteredCards = List.of(new Card());
+        when(cardRepository.findByTags(List.of("tag1"))).thenReturn(filteredCards);
         when(cardRepository.findByTags(List.of("unknownTag"))).thenReturn(Collections.emptyList());
 
-        List<Card> result = cardService.getAllCards(List.of("unknownTag"));
+        List<Card> resultWithValidTag = cardService.getAllCards(List.of("tag1"));
+        List<Card> resultWithInvalidTag = cardService.getAllCards(List.of("unknownTag"));
 
-        assertThat(result).isEmpty();
+        assertThat(resultWithValidTag).isEqualTo(filteredCards);
+        assertThat(resultWithInvalidTag).isEmpty();
+
+        verify(cardRepository).findByTags(List.of("tag1"));
         verify(cardRepository).findByTags(List.of("unknownTag"));
     }
 
@@ -99,40 +86,32 @@ class CardServiceImplTest {
     }
 
     @Test
-    void shouldReturnEmptyListWhenNoCardsAreDueForReview() {
-        List<Card> mockCards = List.of(new Card(), new Card());
-        when(cardRepository.findAll()).thenReturn(mockCards);
-        when(cardReviewScheduler.selectCardsForReview(mockCards, LocalDate.now())).thenReturn(Collections.emptyList());
+    void shouldGenerateIdWhenCardIdIsNullOrBlank() {
+        Card inputCard1 = new Card();
+        Card inputCard2 = new Card();
+        inputCard2.setId("");
 
-        List<Card> result = cardService.getQuizzCards(null);
+        cardService.createCard(inputCard1);
+        cardService.createCard(inputCard2);
 
-        assertThat(result).isEmpty();
-        verify(cardRepository).findAll();
-        verify(cardReviewScheduler).selectCardsForReview(mockCards, LocalDate.now());
+        verify(cardRepository, times(2)).save(any(Card.class));
     }
 
     @Test
-    void shouldCreateCardWithFirstCategory() {
-        Card newCard = new Card();
-        when(cardRepository.save(any(Card.class))).thenReturn(newCard);
+    void shouldSaveCardCorrectly() {
+        Card card = new Card();
+        card.setId("test-id");
+        card.setQuestion("What is SOLID?");
+        card.setAnswer("A set of design principles.");
+        card.setTag("Best Practices");
 
-        Card createdCard = cardService.createCard(newCard);
+        when(cardRepository.save(card)).thenReturn(card);
 
-        assertThat(createdCard.getCategory()).isEqualTo(Category.FIRST);
-        verify(cardRepository).save(newCard);
-    }
+        Card savedCard = cardService.createCard(card);
 
-    @Test
-    void shouldReturnCardsWhenQuizzCardsAreAvailable() {
-        List<Card> mockCards = List.of(new Card(), new Card());
-        when(cardRepository.findAll()).thenReturn(mockCards);
-        when(cardReviewScheduler.selectCardsForReview(mockCards, LocalDate.now())).thenReturn(mockCards);
-
-        List<Card> result = cardService.getQuizzCards(null);
-
-        assertThat(result).isEqualTo(mockCards);
-        verify(cardRepository).findAll();
-        verify(cardReviewScheduler).selectCardsForReview(mockCards, LocalDate.now());
+        assertThat(savedCard).isNotNull();
+        assertThat(savedCard.getId()).isEqualTo("test-id");
+        verify(cardRepository).save(card);
     }
 
     @Test

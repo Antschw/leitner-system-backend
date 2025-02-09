@@ -2,8 +2,8 @@ package com.esgi.leitner.application.service;
 
 import com.esgi.leitner.application.port.in.CardService;
 import com.esgi.leitner.application.port.out.CardRepository;
+import com.esgi.leitner.domain.factory.CardFactory;
 import com.esgi.leitner.domain.model.Card;
-import com.esgi.leitner.domain.model.Category;
 import com.esgi.leitner.domain.service.CardReviewScheduler;
 import com.esgi.leitner.domain.service.CategoryProgression;
 import org.springframework.stereotype.Service;
@@ -40,14 +40,18 @@ public class CardServiceImpl implements CardService {
     }
 
     /**
-     * Creates a new card and assigns it to the first category.
+     * Creates a new Card and ensures it has a valid ID before saving.
+     * <p>
+     * If the provided Card does not have an ID, a new one is generated using {@link CardFactory}.
      *
-     * @param card The card to be created.
-     * @return The created card.
+     * @param card The card to be created and stored.
+     * @return The card with a valid ID.
      */
     @Override
     public Card createCard(Card card) {
-        card.setCategory(Category.FIRST);
+        if (card.getId() == null || card.getId().isBlank()) {
+            card = CardFactory.createCard(card.getQuestion(), card.getAnswer(), card.getTag());
+        }
         return cardRepository.save(card);
     }
 
