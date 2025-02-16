@@ -81,4 +81,15 @@ public class CardServiceImpl implements CardService {
                     cardRepository.save(card);
                 });
     }
+    /**
+     * Retrieves a card with a given ID
+     *
+     * @param cardId the ID of the searched card
+     * @return List of matching cards.
+     */
+    @Override
+    public Card getCardById(String cardId) {
+        return cardRepository.findById(cardId).orElse(null);
+    }
+
 }
