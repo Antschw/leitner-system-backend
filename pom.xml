@@ -4,13 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- Définition du parent pour bénéficier de la configuration par défaut de Spring Boot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.2</version>
-        <relativePath/> <!-- Permet de rechercher le parent depuis le repository -->
+        <relativePath/>
     </parent>
 
     <groupId>com.esgi</groupId>
@@ -24,13 +22,11 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Boot Starter Web pour créer une API REST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Lombok pour réduire le boilerplate code -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -38,7 +34,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- OpenAPI / Swagger pour la documentation de l'API -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -55,14 +50,12 @@
             <version>${springdocVersion}</version>
         </dependency>
 
-        <!-- Jackson pour la sérialisation/désérialisation JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.18.2</version>
         </dependency>
 
-        <!-- Spring Boot Starter Test pour les tests unitaires et d'intégration -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -72,7 +65,6 @@
 
     <build>
         <plugins>
-            <!-- Plugin Spring Boot Maven permettant d'exécuter l'application -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
