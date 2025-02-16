@@ -64,6 +64,7 @@ public class CardController {
      */
     @PatchMapping("/{cardId}/answer")
     public void answerCard(@PathVariable("cardId") String cardId, @Valid @RequestBody AnswerRequest request) {
-        cardService.answerCard(cardId, request.isValid());
+        boolean finalAnswer = request.isValid() || request.isForceValidation();
+        cardService.answerCard(cardId, finalAnswer);
     }
 }

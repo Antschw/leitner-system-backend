@@ -1,6 +1,5 @@
 package com.esgi.leitner.infrastructure.adapter.in;
 
-import com.esgi.leitner.domain.model.Token;
 import com.esgi.leitner.domain.model.User;
 import com.esgi.leitner.domain.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +18,39 @@ public class UserController {
     }
 
     /**
-     * Creates a new user.
-     * Example: POST /users
+     * Creates (sign up) a new user.
+     * Example: POST /users/signup
      *
      * @param user the user details in the request body
      * @return the created user
      */
-    @PostMapping
-    public User createUser(@RequestBody User user) {
+    @PostMapping("/signup")
+    public User signUp(@RequestBody User user) {
         return userService.createUser(user);
+    }
+
+    /**
+     * Logs in a user.
+     * Example: POST /users/login
+     *
+     * @param user the user credentials in the request body (email, password, etc.)
+     * @return a token or a simple message
+     */
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        return "User " + user.getUsername() + " logged in.";
+    }
+
+    /**
+     * Disconnects a user (logout).
+     * Example: POST /users/disconnect?userId=123
+     *
+     * @param userId the ID of the user to disconnect
+     * @return a simple message indicating the user is disconnected
+     */
+    @PostMapping("/disconnect")
+    public String disconnect(@RequestParam("userId") String userId) {
+        return "User " + userId + " disconnected";
     }
 
     /**
@@ -80,20 +103,6 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
-    /**
-     * Generates a token for the user.
-     * Example: POST /users/{userId}/token
-     *
-     * @param userId the ID of the user
-     * @param user   the user details (should match the ID in the path)
-     * @return the generated token
-     */
-    @PostMapping("/{userId}/token")
-    public Token generateToken(@PathVariable("userId") String userId, @RequestBody User user) {
-        // Ensure that the user ID in the request body matches the path
-        user.setId(userId);
-        return userService.generateTokenForUser(user);
-    }
 
     /**
      * Applies cooldown to the user.
@@ -123,4 +132,7 @@ public class UserController {
         LocalTime notificationTime = LocalTime.parse(time);
         return userService.updateNotificationTime(userId, notificationTime);
     }
+
+
+
 }

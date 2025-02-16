@@ -12,6 +12,7 @@ import lombok.Setter;
 public class AnswerRequest {
     @JsonProperty("isValid")
     private boolean isValid;
+    private boolean forceValidation;
 
     @JsonCreator
     public AnswerRequest(boolean isValid) {

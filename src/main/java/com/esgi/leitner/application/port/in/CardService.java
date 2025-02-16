@@ -1,7 +1,6 @@
 package com.esgi.leitner.application.port.in;
 
 import com.esgi.leitner.domain.model.Card;
-import com.esgi.leitner.infrastructure.dto.AnswerRequest;
 
 import java.util.List;
 

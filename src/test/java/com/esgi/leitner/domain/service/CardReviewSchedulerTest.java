@@ -27,7 +27,7 @@ class CardReviewSchedulerTest {
 
     @Test
     void shouldSelectCardsScheduledForReviewToday() {
-        LocalDate today = LocalDate.ofEpochDay(16); // Multiple of 16, so should match category 5
+        LocalDate today = LocalDate.ofEpochDay(16);
         Card dueCard = createCard(Category.FIFTH);
 
         List<Card> reviewCards = cardReviewScheduler.selectCardsForReview(List.of(dueCard), today);
@@ -37,7 +37,7 @@ class CardReviewSchedulerTest {
 
     @Test
     void shouldNotSelectCardsThatAreNotDueForReview() {
-        LocalDate today = LocalDate.ofEpochDay(3); // Not a multiple of 4, so category 3 should NOT be selected
+        LocalDate today = LocalDate.ofEpochDay(3);
         Card notDueCard = createCard(Category.THIRD);
 
         List<Card> reviewCards = cardReviewScheduler.selectCardsForReview(List.of(notDueCard), today);
@@ -47,10 +47,10 @@ class CardReviewSchedulerTest {
 
     @Test
     void shouldSelectMultipleCardsThatAreDueForReview() {
-        LocalDate today = LocalDate.ofEpochDay(8); // Multiple of 8, should match category 4 and category 2
+        LocalDate today = LocalDate.ofEpochDay(8);
         Card card1 = createCard(Category.SECOND);
         Card card2 = createCard(Category.FOURTH);
-        Card card3 = createCard(Category.FIFTH); // Not due
+        Card card3 = createCard(Category.FIFTH);
 
         List<Card> reviewCards = cardReviewScheduler.selectCardsForReview(List.of(card1, card2, card3), today);
 
@@ -59,9 +59,9 @@ class CardReviewSchedulerTest {
 
     @Test
     void shouldNotSelectAnyCardIfNoneAreDueForReview() {
-        LocalDate today = LocalDate.ofEpochDay(7); // 7 n'est pas un multiple de 1, 2, 4, 8, 16...
-        Card card1 = createCard(Category.FOURTH); // Devrait être révisé tous les 8 jours
-        Card card2 = createCard(Category.FIFTH);  // Devrait être révisé tous les 16 jours
+        LocalDate today = LocalDate.ofEpochDay(7);
+        Card card1 = createCard(Category.FOURTH);
+        Card card2 = createCard(Category.FIFTH);
 
         List<Card> reviewCards = cardReviewScheduler.selectCardsForReview(List.of(card1, card2), today);
 
